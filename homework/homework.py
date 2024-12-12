@@ -82,6 +82,7 @@ def make_pipeline(df):
             ('num', MinMaxScaler(), numerical_features),
             ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_features)
         ]
+        # , remainder=MinMaxScaler(), # Escalar las variables numericas
     )
 
     pipeline = Pipeline(
@@ -155,17 +156,17 @@ def calculate_metrics(model, x_train, y_train, x_test, y_test):
     metrics_train = {
         'type': 'metrics',
         'dataset': 'train',
-        'r2': float(round(r2_score(y_train, y_train_pred),3)),
-        'mse': float(round(mean_squared_error(y_train, y_train_pred),3)),
-        'mad': float(round(median_absolute_error(y_train, y_train_pred),3))
+        'r2': float(r2_score(y_train, y_train_pred)),
+        'mse': float(mean_squared_error(y_train, y_train_pred)),
+        'mad': float(median_absolute_error(y_train, y_train_pred))
     }
 
     metrics_test = {
         'type': 'metrics',
         'dataset': 'test',
-        'r2': float(round(r2_score(y_test, y_test_pred),3)),
-        'mse': float(round(mean_squared_error(y_test, y_test_pred),3)),
-        'mad': float(round(median_absolute_error(y_test, y_test_pred),3))
+        'r2': float(r2_score(y_test, y_test_pred)),
+        'mse': float(mean_squared_error(y_test, y_test_pred)),
+        'mad': float(median_absolute_error(y_test, y_test_pred))
     }
 
     print(metrics_train)
@@ -208,6 +209,8 @@ if __name__ == '__main__':
     print(f'Time to optimize hyperparameters: {end - start:.2f} seconds')
 
     print(model.best_params_)
+    print(f'Model score in training: {model.score(x_train, y_train)}')
+    print(f'Model score in test: {model.score(x_test, y_test)}')
 
     # Guardar el modelo
     save_model(model)
